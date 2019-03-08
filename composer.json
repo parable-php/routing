@@ -1,0 +1,31 @@
+{
+  "name": "parable-php/routing",
+  "type": "library",
+  "description": "Parable Routing is a light-weight and fast url Routing library",
+  "keywords": ["library", "micro", "routing", "route", "router", "url"],
+  "homepage": "https://github.com/parable-php/routing",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Robin de Graaf",
+      "email": "hello@devvoh.com",
+      "homepage": "https://devvoh.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Parable\\Routing\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Parable\\Routing\\Tests\\": "tests"
+    }
+  }
+}
