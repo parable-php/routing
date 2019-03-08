@@ -1,4 +1,4 @@
-# Parable DI Container
+# Parable Routing
 
 [![Build Status](https://travis-ci.org/parable-php/routing.svg?branch=master)](https://travis-ci.org/parable-php/routing)
 [![Latest Stable Version](https://poser.pugx.org/parable-php/routing/v/stable)](https://packagist.org/packages/parable-php/routing)
@@ -16,8 +16,6 @@ $ composer require parable-php/routing
 ```
 
 ## Usage
-
-
 
 ```php
 $router = new Router();
