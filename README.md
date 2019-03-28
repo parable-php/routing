@@ -52,6 +52,24 @@ $callable = $match->getCallable();
 $callable(...$match->getParameterValues()->getAll());
 ```
 
+For more free-form metadata you want to attach to a `Route`, you can use metadata:
+
+```php
+$route = new Route(
+    ['GET'],
+    'simple-route',
+    'route/simple',
+    [Controller::class, 'actionName'],
+    [
+        'metadata' => 'enabled'
+    ]
+);
+
+$route->getMetadataValue('metadata'); // returns 'enabled'
+```
+
+You can use this to add template paths to a route, whether it should be visible to admins only, etc.
+
 ## Contributing
 
 Any suggestions, bug reports or general feedback is welcome. Use github issues and pull requests, or find me over at [devvoh.com](https://devvoh.com).

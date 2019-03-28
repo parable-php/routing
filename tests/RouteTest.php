@@ -4,8 +4,7 @@ namespace Parable\Routing\Tests;
 
 use Parable\Routing\Exception;
 use Parable\Routing\Route;
-use Parable\Routing\Router;
-use Parable\Routing\Tests\Classes\Controller;
+use Parable\Routing\Route\Metadata;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
 {
@@ -98,5 +97,54 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'p2' => 'test2',
             'p3' => 'test3',
         ]));
+    }
+
+    public function testMetadataOnRouteCreation()
+    {
+        $route = new Route(
+            ['GET'],
+            'test-route',
+            '/test',
+            function() {
+                return 'yeah';
+            },
+            [
+                'template' => 'yeah.phtml',
+            ]
+        );
+
+        self::assertInstanceOf(Metadata::class, $route->getMetadata());
+        self::assertSame('yeah.phtml', $route->getMetadataValue('template'));
+    }
+
+    public function testMetadataGetSet()
+    {
+        $metadata = new Metadata();
+
+        self::assertNull($metadata->get('test'));
+
+        $metadata->set('test', true);
+
+        self::assertTrue($metadata->get('test'));
+    }
+
+    public function testMetadataGetAllAndSetMany()
+    {
+        $metadata = new Metadata();
+
+        self::assertSame([], $metadata->getAll());
+
+        $metadata->setMany([
+            'test' => true,
+            'more' => 'also true',
+        ]);
+
+        self::assertSame(
+            [
+                'test' => true,
+                'more' => 'also true',
+            ],
+            $metadata->getAll()
+        );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Parable\Routing;
 
+use Parable\Routing\Route\Metadata;
 use Parable\Routing\Route\ParameterValues;
 
 class Route
@@ -37,6 +38,11 @@ class Route
     protected $action;
 
     /**
+     * @var Metadata
+     */
+    protected $metadata;
+
+    /**
      * @var ParameterValues
      */
     protected $parameterValues;
@@ -45,11 +51,13 @@ class Route
         array $httpMethods,
         string $name,
         string $url,
-        $callable
+        $callable,
+        array $metadata = []
     ) {
         $this->httpMethods = $httpMethods;
         $this->name = $name;
         $this->url = '/' . trim($url, '/');
+        $this->metadata = new Metadata($metadata);
 
         if (is_array($callable) && count($callable) === 2) {
             [$this->controller, $this->action] = $callable;
@@ -151,5 +159,15 @@ class Route
     public function hasParameters(): bool
     {
         return strpos($this->url, '{') !== false;
+    }
+
+    public function getMetadata(): Metadata
+    {
+        return $this->metadata;
+    }
+
+    public function getMetadataValue(string $name)
+    {
+        return $this->metadata->get($name);
     }
 }
