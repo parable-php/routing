@@ -74,7 +74,7 @@ class Router
 
     public function match(string $httpMethod, string $urlToMatch)
     {
-        $urlToMatch = '/' . trim($urlToMatch, '/');;
+        $urlToMatch = '/' . trim($urlToMatch, '/');
 
         return $this->matchDirect($httpMethod, $urlToMatch)
             ?? $this->matchParametered($httpMethod, $urlToMatch)
