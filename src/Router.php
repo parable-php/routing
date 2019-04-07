@@ -7,19 +7,30 @@ use Parable\Routing\Route\ParameterValues;
 class Router
 {
     /**
-     * @var Route[]
+     * @var Route[][]
      */
     protected $routes = [];
 
     /**
-     * @var string[]
+     * @var string[][]
      */
     protected $routeNames = [];
 
     public function addRoute(Route $route): void
     {
-        $this->routes[$route->getUrl()] = $route;
-        $this->routeNames[$route->getName()] = $route->getUrl();
+        foreach ($route->getHttpMethods() as $httpMethod) {
+            $this->addRouteForHttpMethod($httpMethod, $route);
+        }
+    }
+
+    protected function addRouteForHttpMethod(string $httpMethod, Route $route): void
+    {
+        if (!array_key_exists($httpMethod, $this->routes)) {
+            $this->routes[$httpMethod] = [];
+        }
+
+        $this->routes[$httpMethod][$route->getUrl()] = $route;
+        $this->routeNames[$httpMethod][$route->getName()] = $route->getUrl();
     }
 
     public function addRoutes(Route ...$routes): void
@@ -29,25 +40,25 @@ class Router
         }
     }
 
-    public function getRoutes(): array
+    public function getRoutes(string $httpMethod): array
     {
-        return $this->routes;
+        return $this->routes[$httpMethod] ?? [];
     }
 
-    public function getRouteByName(string $name): ?Route
+    public function getRouteByName(string $httpMethod, string $name): ?Route
     {
-        $routeUrl = $this->routeNames[$name] ?? null;
+        $routeUrl = $this->routeNames[$httpMethod][$name] ?? null;
 
         if ($routeUrl === null) {
             return null;
         }
 
-        return $this->routes[$routeUrl] ?? null;
+        return $this->routes[$httpMethod][$routeUrl] ?? null;
     }
 
-    public function buildRouteUrl(string $name, array $parameters = []): string
+    public function buildRouteUrl(string $httpMethod, string $name, array $parameters = []): string
     {
-        $route = $this->getRouteByName($name);
+        $route = $this->getRouteByName($httpMethod, $name);
 
         if ($route === null) {
             throw new Exception(sprintf("Route '%s' not found.", $name));
@@ -83,7 +94,7 @@ class Router
 
     protected function matchDirect(string $httpMethod, string $urlToMatch): ?Route
     {
-        $route = $this->routes[$urlToMatch] ?? null;
+        $route = $this->routes[$httpMethod][$urlToMatch] ?? null;
 
         if ($route === null || !$route->supportsHttpMethod($httpMethod)) {
             return null;
@@ -94,7 +105,11 @@ class Router
 
     protected function matchParametered(string $httpMethod, string $urlToMatch): ?Route
     {
-        foreach ($this->routes as $routeUrl => $route) {
+        if (!array_key_exists($httpMethod, $this->routes)) {
+            return null;
+        }
+
+        foreach ($this->routes[$httpMethod] as $routeUrl => $route) {
             if (strpos($routeUrl, '{') === false || !$route->supportsHttpMethod($httpMethod)) {
                 continue;
             }
