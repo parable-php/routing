@@ -54,7 +54,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     {
         $this->setUpDefaultRoutesAndAssert();
 
-        $route = $this->router->getRouteByName('GET', 'simple');
+        $route = $this->router->getRouteByName('simple');
 
         self::assertSame(['GET'], $route->getHttpMethods());
         self::assertSame('/simple', $route->getUrl());
@@ -68,7 +68,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidGetRouteByNameReturnsNull()
     {
-        self::assertNull($this->router->getRouteByName('GET', 'la-dee-dah'));
+        self::assertNull($this->router->getRouteByName('la-dee-dah'));
     }
 
     public function testInvalidMatchReturnsNull()
@@ -252,7 +252,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     {
         $this->setUpDefaultRoutesAndAssert();
 
-        $route = $this->router->buildRouteUrl('GET', 'complex', ['id' => 2, 'name' => 'stuff']);
+        $route = $this->router->buildRouteUrl('complex', ['id' => 2, 'name' => 'stuff']);
         self::assertSame("/complex/2/stuff", $route);
     }
 
@@ -261,7 +261,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Route 'nope' not found.");
 
-        $this->router->buildRouteUrl('GET', 'nope', ['id' => 2, 'name' => 'stuff']);
+        $this->router->buildRouteUrl('nope', ['id' => 2, 'name' => 'stuff']);
     }
 
     public function testBuildRouteUrlThrowsOnUrlWithWrongParameters()
@@ -271,7 +271,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Parameter 'id2' not found in url '/complex/{id}/{name}'.");
 
-        $this->router->buildRouteUrl('GET', 'complex', ['id2' => 2, 'name2' => 'stuff']);
+        $this->router->buildRouteUrl('complex', ['id2' => 2, 'name2' => 'stuff']);
     }
 
     public function testRouteReturnsNullOnNonExistingValueKey()
@@ -289,9 +289,9 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     {
         $this->setUpDefaultRoutesAndAssert();
 
-        self::assertSame('/simple', $this->router->buildRouteUrl('GET', 'simple'));
-        self::assertSame('/simple', $this->router->buildRouteUrl('GET', 'simple', []));
-        self::assertSame('/simple', $this->router->buildRouteUrl('GET', 'simple', ['id2' => 2, 'name2' => 'stuff']));
+        self::assertSame('/simple', $this->router->buildRouteUrl('simple'));
+        self::assertSame('/simple', $this->router->buildRouteUrl('simple', []));
+        self::assertSame('/simple', $this->router->buildRouteUrl('simple', ['id2' => 2, 'name2' => 'stuff']));
     }
 
     public function testGetRoutesReturnsCorrectNumberOfRoutes()

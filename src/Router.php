@@ -45,20 +45,22 @@ class Router
         return $this->routes[$httpMethod] ?? [];
     }
 
-    public function getRouteByName(string $httpMethod, string $name): ?Route
+    public function getRouteByName(string $name): ?Route
     {
-        $routeUrl = $this->routeNames[$httpMethod][$name] ?? null;
+        foreach ($this->routeNames as $httpMethod => $routeNames) {
+            $routeUrl = $routeNames[$name] ?? null;
 
-        if ($routeUrl === null) {
-            return null;
+            if ($routeUrl !== null) {
+                return $this->routes[$httpMethod][$routeUrl] ?? null;
+            }
         }
 
-        return $this->routes[$httpMethod][$routeUrl] ?? null;
+        return null;
     }
 
-    public function buildRouteUrl(string $httpMethod, string $name, array $parameters = []): string
+    public function buildRouteUrl(string $name, array $parameters = []): string
     {
-        $route = $this->getRouteByName($httpMethod, $name);
+        $route = $this->getRouteByName($name);
 
         if ($route === null) {
             throw new Exception(sprintf("Route '%s' not found.", $name));
