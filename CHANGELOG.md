@@ -7,8 +7,8 @@ _Changes_
 Well, that had unintentional effects, didn't it? The whole idea of named routes was that names were unique. So requiring an HTTP method to work with them that way is against that exact notion.
 
 The following methods _obviously_ don't require passing in the HTTP method:
-- `getRouteByName(string $httpMethod, string $name): ?Route`
-- `buildRouteUrl(string $httpMethod, string $name, array $parameters = []): string`
+- `getRouteByName(string $name): ?Route`
+- `buildRouteUrl(string $name, array $parameters = []): string`
 
 Ahh, the beauty of pre-release software 😅
 
