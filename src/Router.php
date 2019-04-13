@@ -16,6 +16,22 @@ class Router
      */
     protected $routeNames = [];
 
+    /**
+     * @param string[] $httpMethods
+     * @param mixed $callable
+     */
+    public function add(
+        array $httpMethods,
+        string $name,
+        string $url,
+        $callable,
+        array $metadata = []
+    ): void {
+        $this->addRoute(
+            new Route($httpMethods, $name, $url, $callable, $metadata)
+        );
+    }
+
     public function addRoute(Route $route): void
     {
         foreach ($route->getHttpMethods() as $httpMethod) {

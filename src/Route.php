@@ -166,6 +166,11 @@ class Route
         return $this->metadata;
     }
 
+    public function hasMetadataValues(): bool
+    {
+        return count($this->metadata->getAll()) > 0;
+    }
+
     public function getMetadataValue(string $name)
     {
         return $this->metadata->get($name);

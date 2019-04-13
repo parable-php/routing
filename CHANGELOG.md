@@ -1,5 +1,12 @@
 # Parable Routing
 
+## 0.2.2
+
+_Changes_
+
+- Added `Router::add($httpMethods, $name, $url, $callable, $metadata)`, which does the same as `addRoute()` but will create a new `Route` instance for you. Utility function, but nice.
+- Added `Route::hasMetadataValues(): bool`.
+
 ## 0.2.1
 
 _Changes_

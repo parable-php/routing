@@ -64,6 +64,23 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         self::assertNull($route->getCallable());
 
         self::assertFalse($route->hasParameterValues());
+        self::assertFalse($route->hasMetadataValues());
+    }
+
+    public function testAddAndGetRouteByName()
+    {
+        $this->router->add(['GET'], 'name-of-route', 'url', function() { return 'ran'; }, ['metadata' => true]);
+
+        $route = $this->router->getRouteByName('name-of-route');
+
+        self::assertSame(['GET'], $route->getHttpMethods());
+        self::assertSame('/url', $route->getUrl());
+        self::assertIsCallable($route->getCallable());
+
+        self::assertFalse($route->hasParameterValues());
+        self::assertTrue($route->hasMetadataValues());
+
+        self::assertSame(true, $route->getMetadata()->get('metadata'));
     }
 
     public function testInvalidGetRouteByNameReturnsNull()

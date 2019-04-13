@@ -99,6 +99,14 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ]));
     }
 
+    public function testNoMetadataIsHandledCorrectly()
+    {
+        $route = new Route(['GET'], 'name', 'url', function () {});
+
+        self::assertFalse($route->hasMetadataValues());
+        self::assertEmpty($route->getMetadata()->getAll());
+    }
+
     public function testMetadataOnRouteCreation()
     {
         $route = new Route(
@@ -113,6 +121,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
+        self::assertTrue($route->hasMetadataValues());
         self::assertInstanceOf(Metadata::class, $route->getMetadata());
         self::assertSame('yeah.phtml', $route->getMetadataValue('template'));
     }
