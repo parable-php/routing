@@ -395,4 +395,18 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ['/simple/'],
         ];
     }
+
+    public function testSimilarUrlsDoNotConflictAndParametersAreReplacedCorrectly()
+    {
+        $this->router->add(['GET'], 'route1', 'route1/{param}', function () {});
+        $this->router->add(['GET'], 'route2', 'route2/{param}', function () {});
+
+        $matched = $this->router->match('GET', 'route1/test');
+
+        self::assertSame('route1', $matched->getName());
+
+        $matched = $this->router->match('GET', 'route2/test');
+
+        self::assertSame('route2', $matched->getName());
+    }
 }

@@ -1,5 +1,11 @@
 # Parable Routing
 
+## 0.2.3
+
+_Bugfix_
+
+- Small fix in `Router`, where while replacing parameters in a url we're matching would not check if the original url part was actually a parameter.
+
 ## 0.2.2
 
 _Changes_

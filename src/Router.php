@@ -146,6 +146,10 @@ class Router
             foreach ($providedValues as $key => $value) {
                 $parameter = $explodedRouteUrl[$key];
 
+                if (strpos($parameter, '{') === false) {
+                    continue;
+                }
+
                 $valuesWithParameterAsKey[trim($parameter, '{}')] = $value;
 
                 $explodedUrlToMatch[$key] = $parameter;
