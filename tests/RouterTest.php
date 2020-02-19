@@ -19,7 +19,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->router = new Router();
     }
 
-    protected function setUpDefaultRoutesAndAssert()
+    protected function setUpDefaultRoutesAndAssert(): void
     {
         self::assertCount(0, $this->router->getRoutes('GET'));
 
@@ -50,7 +50,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         self::assertCount(1, $this->router->getRoutes('POST'));
     }
 
-    public function testAddRouteAndGetRouteByName()
+    public function testAddRouteAndGetRouteByName(): void
     {
         $this->setUpDefaultRoutesAndAssert();
 
@@ -67,7 +67,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($route->hasMetadataValues());
     }
 
-    public function testAddAndGetRouteByName()
+    public function testAddAndGetRouteByName(): void
     {
         $this->router->add(['GET'], 'name-of-route', 'url', function() { return 'ran'; }, ['metadata' => true]);
 
@@ -83,24 +83,24 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         self::assertSame(true, $route->getMetadata()->get('metadata'));
     }
 
-    public function testInvalidGetRouteByNameReturnsNull()
+    public function testInvalidGetRouteByNameReturnsNull(): void
     {
         self::assertNull($this->router->getRouteByName('la-dee-dah'));
     }
 
-    public function testInvalidMatchReturnsNull()
+    public function testInvalidMatchReturnsNull(): void
     {
         $this->setUpDefaultRoutesAndAssert();
 
         self::assertNull($this->router->match('GET', 'la-dee-dah'));
     }
 
-    public function testNoRoutesExistingReturnsNull()
+    public function testNoRoutesExistingReturnsNull(): void
     {
         self::assertNull((new Router())->match('GET', 'la-dee-dah'));
     }
 
-    public function testInvalidMatchOnMethodReturnsNull()
+    public function testInvalidMatchOnMethodReturnsNull(): void
     {
         $this->setUpDefaultRoutesAndAssert();
 
@@ -108,7 +108,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         self::assertNull($this->router->match('POST', '/simple'));
     }
 
-    public function testMatchUrlSimple()
+    public function testMatchUrlSimple(): void
     {
         $this->setUpDefaultRoutesAndAssert();
 
@@ -126,7 +126,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($route->hasParameterValues());
     }
 
-    public function testUrlWithHtmlShouldNotMatch()
+    public function testUrlWithHtmlShouldNotMatch(): void
     {
         $this->router->addRoute(new Route(
             ['GET'],
@@ -142,26 +142,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         self::assertNull($route);
     }
 
-    private function assertComplexUrl(string $method, string $url, string $routeUrl, Route\ParameterValues $values)
-    {
-        $this->setUpDefaultRoutesAndAssert();
-
-        $route = $this->router->match($method, $url);
-
-        self::assertNotNull($route);
-
-        self::assertSame(['GET', 'POST'], $route->getHttpMethods());
-        self::assertSame($routeUrl, $route->getUrl());
-        self::assertSame(Controller::class, $route->getController());
-        self::assertSame('complex', $route->getAction());
-
-        self::assertNull($route->getCallable());
-
-        self::assertTrue($route->hasParameterValues());
-        self::assertEquals($values, $route->getParameterValues());
-    }
-
-    public function testmatchUrlComplexMain()
+    public function testMatchUrlComplexMain(): void
     {
         self::assertComplexUrl(
             'GET',
@@ -171,7 +152,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlComplexMainPost()
+    public function testMatchUrlComplexMainPost(): void
     {
         self::assertComplexUrl(
             'POST',
@@ -181,7 +162,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlComplexZero1()
+    public function testMatchUrlComplexZero1()
     {
         self::assertComplexUrl(
             'GET',
@@ -191,7 +172,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlComplexZero2()
+    public function testMatchUrlComplexZero2()
     {
         self::assertComplexUrl(
             'GET',
@@ -201,7 +182,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlComplexZero3()
+    public function testMatchUrlComplexZero3()
     {
         self::assertComplexUrl(
             'GET',
@@ -211,7 +192,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlComplexZero4()
+    public function testMatchUrlComplexZero4()
     {
         self::assertComplexUrl(
             'GET',
@@ -221,7 +202,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlComplexZero5()
+    public function testMatchUrlComplexZero5()
     {
         self::assertComplexUrl(
             'GET',
@@ -231,7 +212,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlComplexSpace()
+    public function testMatchUrlComplexSpace()
     {
         self::assertComplexUrl(
             'GET',
@@ -241,7 +222,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testmatchUrlCallable()
+    public function testMatchUrlCallable(): void
     {
         $this->setUpDefaultRoutesAndAssert();
 
@@ -408,5 +389,24 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $matched = $this->router->match('GET', 'route2/test');
 
         self::assertSame('route2', $matched->getName());
+    }
+
+    private function assertComplexUrl(string $method, string $url, string $routeUrl, Route\ParameterValues $values)
+    {
+        $this->setUpDefaultRoutesAndAssert();
+
+        $route = $this->router->match($method, $url);
+
+        self::assertNotNull($route);
+
+        self::assertSame(['GET', 'POST'], $route->getHttpMethods());
+        self::assertSame($routeUrl, $route->getUrl());
+        self::assertSame(Controller::class, $route->getController());
+        self::assertSame('complex', $route->getAction());
+
+        self::assertNull($route->getCallable());
+
+        self::assertTrue($route->hasParameterValues());
+        self::assertEquals($values, $route->getParameterValues());
     }
 }
