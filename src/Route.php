@@ -16,8 +16,8 @@ class Route
     /** @var callable|null */
     protected $callable;
 
-    protected ?string $controller;
-    protected ?string $action;
+    protected ?string $controller = null;
+    protected ?string $action = null;
     protected Metadata $metadata;
     protected ParameterValues $parameterValues;
 

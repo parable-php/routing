@@ -1,5 +1,10 @@
 # Parable Routing
 
+## 0.3.1
+
+_Fixes_
+- With php8 come new challenges -- `?string` values need to be set to `= null` by default.
+
 ## 0.3.0
 
 _Changes_
