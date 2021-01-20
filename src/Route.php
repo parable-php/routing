@@ -21,11 +21,14 @@ class Route
     protected Metadata $metadata;
     protected ParameterValues $parameterValues;
 
+    /**
+     * @param string[] $httpMethods
+     */
     public function __construct(
         array $httpMethods,
         string $name,
         string $url,
-        $callable,
+        mixed $callable,
         array $metadata = []
     ) {
         $this->httpMethods = $httpMethods;
@@ -95,7 +98,7 @@ class Route
         $this->parameterValues = $values;
     }
 
-    public function getParameterValue(string $name)
+    public function getParameterValue(string $name): mixed
     {
         return $this->parameterValues->get($name);
     }

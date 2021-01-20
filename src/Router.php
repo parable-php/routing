@@ -14,13 +14,12 @@ class Router
 
     /**
      * @param string[] $httpMethods
-     * @param mixed $callable
      */
     public function add(
         array $httpMethods,
         string $name,
         string $url,
-        $callable,
+        mixed $callable,
         array $metadata = []
     ): void {
         $this->addRoute(

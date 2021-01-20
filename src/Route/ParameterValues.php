@@ -29,7 +29,7 @@ class ParameterValues
         }
     }
 
-    public function get(string $name)
+    public function get(string $name): mixed
     {
         return $this->values[$name] ?? null;
     }
