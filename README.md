@@ -1,6 +1,6 @@
 # Parable Routing
 
-[![Build Status](https://travis-ci.org/parable-php/routing.svg?branch=master)](https://travis-ci.org/parable-php/routing)
+[![Build Status](https://travis-ci.com/parable-php/routing.svg?branch=master)](https://travis-ci.com/parable-php/routing)
 [![Latest Stable Version](https://poser.pugx.org/parable-php/routing/v/stable)](https://packagist.org/packages/parable-php/routing)
 [![Latest Unstable Version](https://poser.pugx.org/parable-php/routing/v/unstable)](https://packagist.org/packages/parable-php/routing)
 [![License](https://poser.pugx.org/parable-php/routing/license)](https://packagist.org/packages/parable-php/routing)
@@ -9,7 +9,7 @@ Parable Routing is a fast, intuitive url routing library.
 
 ## Install
 
-Php 7.1+ and [composer](https://getcomposer.org) are required.
+Php 8.0+ and [composer](https://getcomposer.org) are required.
 
 ```bash
 $ composer require parable-php/routing

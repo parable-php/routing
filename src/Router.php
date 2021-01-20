@@ -6,15 +6,11 @@ use Parable\Routing\Route\ParameterValues;
 
 class Router
 {
-    /**
-     * @var Route[][]
-     */
-    protected $routes = [];
+    /** @var Route[][] */
+    protected array $routes = [];
 
-    /**
-     * @var string[][]
-     */
-    protected $routeNames = [];
+    /** @var string[][] */
+    protected array $routeNames = [];
 
     /**
      * @param string[] $httpMethods
@@ -88,26 +84,29 @@ class Router
 
         $url = $route->getUrl();
 
-        foreach ($parameters as $name => $value) {
-            $parameter = '{' . $name . '}';
+        foreach ($parameters as $parameterName => $value) {
+            $parameter = '{' . $parameterName . '}';
 
-            if (strpos($url, $parameter) === false) {
-                throw new Exception(sprintf("Parameter '%s' not found in url '%s'.", $name, $url));
+            if (!str_contains($url, $parameter)) {
+                throw new Exception(sprintf(
+                    "Parameter '%s' not found in url '%s'.",
+                    $parameterName,
+                    $url
+                ));
             }
 
-            $url = str_replace('{' . $name . '}', $value, $url);
+            $url = str_replace($parameter, (string)$value, $url);
         }
 
         return $url;
     }
 
-    public function match(string $httpMethod, string $urlToMatch)
+    public function match(string $httpMethod, string $urlToMatch): ?Route
     {
         $urlToMatch = '/' . trim($urlToMatch, '/');
 
         return $this->matchDirect($httpMethod, $urlToMatch)
-            ?? $this->matchParametered($httpMethod, $urlToMatch)
-            ?? null;
+            ?? $this->matchParametered($httpMethod, $urlToMatch);
     }
 
     protected function matchDirect(string $httpMethod, string $urlToMatch): ?Route
@@ -128,7 +127,7 @@ class Router
         }
 
         foreach ($this->routes[$httpMethod] as $routeUrl => $route) {
-            if (strpos($routeUrl, '{') === false || !$route->supportsHttpMethod($httpMethod)) {
+            if (!str_contains($routeUrl, '{') || !$route->supportsHttpMethod($httpMethod)) {
                 continue;
             }
 
@@ -146,7 +145,7 @@ class Router
             foreach ($providedValues as $key => $value) {
                 $parameter = $explodedRouteUrl[$key];
 
-                if (strpos($parameter, '{') === false) {
+                if (!str_contains($parameter, '{')) {
                     continue;
                 }
 

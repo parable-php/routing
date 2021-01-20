@@ -7,45 +7,19 @@ use Parable\Routing\Route\ParameterValues;
 
 class Route
 {
-    /**
-     * @var string[]
-     */
-    protected $httpMethods = [];
+    /** @var string[] */
+    protected array $httpMethods = [];
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
+    protected string $url;
 
-    /**
-     * @var string
-     */
-    protected $url;
-
-    /**
-     * @var callable|null
-     */
+    /** @var callable|null */
     protected $callable;
 
-    /**
-     * @var string|null
-     */
-    protected $controller;
-
-    /**
-     * @var string|null
-     */
-    protected $action;
-
-    /**
-     * @var Metadata
-     */
-    protected $metadata;
-
-    /**
-     * @var ParameterValues
-     */
-    protected $parameterValues;
+    protected ?string $controller;
+    protected ?string $action;
+    protected Metadata $metadata;
+    protected ParameterValues $parameterValues;
 
     public function __construct(
         array $httpMethods,
@@ -78,7 +52,7 @@ class Route
 
     public function supportsHttpMethod(string $httpMethod): bool
     {
-        return in_array($httpMethod, $this->httpMethods);
+        return in_array($httpMethod, $this->httpMethods, true);
     }
 
     public function getName(): string
@@ -146,7 +120,7 @@ class Route
 
         $parameters = [];
         foreach ($urlParts as $part) {
-            if (strpos($part, '{') === false) {
+            if (!str_contains($part, '{')) {
                 continue;
             }
 
@@ -158,7 +132,7 @@ class Route
 
     public function hasParameters(): bool
     {
-        return strpos($this->url, '{') !== false;
+        return str_contains($this->url, '{');
     }
 
     public function getMetadata(): Metadata

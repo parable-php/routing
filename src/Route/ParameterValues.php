@@ -4,15 +4,12 @@ namespace Parable\Routing\Route;
 
 class ParameterValues
 {
-    /**
-     * @var array
-     */
-    protected $values = [];
+    protected array $values = [];
 
     /**
      * @var string[]
      */
-    protected $valueNamesInOrder = [];
+    protected array $valueNamesInOrder = [];
 
     public function __construct(array $values = [])
     {

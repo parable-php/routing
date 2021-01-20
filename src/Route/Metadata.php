@@ -4,10 +4,7 @@ namespace Parable\Routing\Route;
 
 class Metadata
 {
-    /**
-     * @var array
-     */
-    protected $values = [];
+    protected array $values = [];
 
     public function __construct(array $values = [])
     {

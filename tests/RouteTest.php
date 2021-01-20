@@ -5,18 +5,17 @@ namespace Parable\Routing\Tests;
 use Parable\Routing\Exception;
 use Parable\Routing\Route;
 use Parable\Routing\Route\Metadata;
+use PHPUnit\Framework\TestCase;
 
-class RouteTest extends \PHPUnit\Framework\TestCase
+class RouteTest extends TestCase
 {
-    public function testRouteCreation()
+    public function testRouteCreation(): void
     {
         $route = new Route(
             ['GET'],
             'test-route',
             '/test',
-            function() {
-                return 'yeah';
-            }
+            fn() => 'yeah'
         );
 
         self::assertSame('test-route', $route->getName());
@@ -29,15 +28,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         self::assertFalse($route->hasParameterValues());
     }
 
-    public function testParameteredRouteAndParameterValues()
+    public function testParameteredRouteAndParameterValues(): void
     {
         $route = new Route(
             ['GET'],
             'test-route',
             '/test/{p1}/{p2}',
-            function(string $p1, string $p2) {
-                return 'yeah: ' . $p1 . '/' . $p2;
-            }
+            fn(string $p1, string $p2) => 'yeah: ' . $p1 . '/' . $p2
         );
 
         self::assertSame('test-route', $route->getName());
@@ -62,7 +59,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         self::assertSame('test2', $route->getParameterValue('p2'));
     }
 
-    public function testSetValuesThrowsOnInvalidCount()
+    public function testSetValuesThrowsOnInvalidCount(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Number of values do not match Route parameters.');
@@ -71,15 +68,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             ['GET'],
             'test-route',
             '/test/{p1}/{p2}',
-            function(string $p1, string $p2) {
-                return 'yeah: ' . $p1 . '/' . $p2;
-            }
+            fn(string $p1, string $p2) => 'yeah: ' . $p1 . '/' . $p2
         );
 
         $route->setParameterValues(new Route\ParameterValues());
     }
 
-    public function testSetValuesThrowsOnInvalidValueNames()
+    public function testSetValuesThrowsOnInvalidValueNames(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Values names do not match Route parameters.');
@@ -88,9 +83,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             ['GET'],
             'test-route',
             '/test/{p1}/{p2}',
-            function(string $p1, string $p2) {
-                return 'yeah: ' . $p1 . '/' . $p2;
-            }
+            fn(string $p1, string $p2) => 'yeah: ' . $p1 . '/' . $p2
         );
 
         $route->setParameterValues(new Route\ParameterValues([
@@ -99,34 +92,31 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ]));
     }
 
-    public function testNoMetadataIsHandledCorrectly()
+    public function testNoMetadataIsHandledCorrectly(): void
     {
-        $route = new Route(['GET'], 'name', 'url', function () {});
+        $route = new Route(['GET'], 'name', 'url', fn() => null);
 
         self::assertFalse($route->hasMetadataValues());
         self::assertEmpty($route->getMetadata()->getAll());
     }
 
-    public function testMetadataOnRouteCreation()
+    public function testMetadataOnRouteCreation(): void
     {
         $route = new Route(
             ['GET'],
             'test-route',
             '/test',
-            function() {
-                return 'yeah';
-            },
+            fn() => 'yeah',
             [
                 'template' => 'yeah.phtml',
             ]
         );
 
         self::assertTrue($route->hasMetadataValues());
-        self::assertInstanceOf(Metadata::class, $route->getMetadata());
         self::assertSame('yeah.phtml', $route->getMetadataValue('template'));
     }
 
-    public function testMetadataGetSet()
+    public function testMetadataGetSet(): void
     {
         $metadata = new Metadata();
 
@@ -137,7 +127,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($metadata->get('test'));
     }
 
-    public function testMetadataGetAllAndSetMany()
+    public function testMetadataGetAllAndSetMany(): void
     {
         $metadata = new Metadata();
 
