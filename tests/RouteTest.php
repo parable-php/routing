@@ -2,7 +2,7 @@
 
 namespace Parable\Routing\Tests;
 
-use Parable\Routing\Exception;
+use Parable\Routing\RoutingException;
 use Parable\Routing\Route;
 use Parable\Routing\Route\Metadata;
 use PHPUnit\Framework\TestCase;
@@ -61,7 +61,7 @@ class RouteTest extends TestCase
 
     public function testSetValuesThrowsOnInvalidCount(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(RoutingException::class);
         $this->expectExceptionMessage('Number of values do not match Route parameters.');
 
         $route = new Route(
@@ -76,7 +76,7 @@ class RouteTest extends TestCase
 
     public function testSetValuesThrowsOnInvalidValueNames(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(RoutingException::class);
         $this->expectExceptionMessage('Values names do not match Route parameters.');
 
         $route = new Route(

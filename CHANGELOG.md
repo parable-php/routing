@@ -1,5 +1,12 @@
 # Parable Routing
 
+## 0.4.0
+
+_Changes_
+
+- Add static analysis using psalm.
+- `Exception` has been renamed to `RoutingException` for clarity.
+
 ## 0.3.1
 
 _Fixes_

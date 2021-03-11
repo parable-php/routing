@@ -2,10 +2,10 @@
 
 namespace Parable\Routing\Tests;
 
-use Parable\Routing\Exception;
 use Parable\Routing\Route;
 use Parable\Routing\Route\ParameterValues;
 use Parable\Routing\Router;
+use Parable\Routing\RoutingException;
 use Parable\Routing\Tests\Classes\Controller;
 use PHPUnit\Framework\TestCase;
 
@@ -251,7 +251,7 @@ class RouterTest extends TestCase
 
     public function testBuildRouteUrlThrowsOnUnknownName(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(RoutingException::class);
         $this->expectExceptionMessage("Route 'nope' not found.");
 
         $this->router->buildRouteUrl('nope', ['id' => 2, 'name' => 'stuff']);
@@ -261,7 +261,7 @@ class RouterTest extends TestCase
     {
         $this->setUpDefaultRoutesAndAssert();
 
-        $this->expectException(Exception::class);
+        $this->expectException(RoutingException::class);
         $this->expectExceptionMessage("Parameter 'id2' not found in url '/complex/{id}/{name}'.");
 
         $this->router->buildRouteUrl('complex', ['id2' => 2, 'name2' => 'stuff']);

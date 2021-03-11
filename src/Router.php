@@ -74,7 +74,7 @@ class Router
         $route = $this->getRouteByName($name);
 
         if ($route === null) {
-            throw new Exception(sprintf("Route '%s' not found.", $name));
+            throw new RoutingException(sprintf("Route '%s' not found.", $name));
         }
 
         if (!$route->hasParameters()) {
@@ -87,7 +87,7 @@ class Router
             $parameter = '{' . $parameterName . '}';
 
             if (!str_contains($url, $parameter)) {
-                throw new Exception(sprintf(
+                throw new RoutingException(sprintf(
                     "Parameter '%s' not found in url '%s'.",
                     $parameterName,
                     $url

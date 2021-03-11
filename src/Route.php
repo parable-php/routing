@@ -88,11 +88,11 @@ class Route
         $parameters = $this->getParameters();
 
         if (count($values->getAll()) !== count($parameters)) {
-            throw new Exception('Number of values do not match Route parameters.');
+            throw new RoutingException('Number of values do not match Route parameters.');
         }
 
         if (array_diff($values->getNames(), $parameters)) {
-            throw new Exception('Values names do not match Route parameters.');
+            throw new RoutingException('Values names do not match Route parameters.');
         }
 
         $this->parameterValues = $values;
