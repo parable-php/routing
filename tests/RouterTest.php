@@ -489,6 +489,7 @@ class RouterTest extends TestCase
     private function provideCatchAllUrls(): array
     {
         return [
+            ['/catchall', [], []],
             ['/catchall/something', [], ['something']],
             ['/catchall/something/else', [], ['something', 'else']],
             ['/catch/all/something', [], ['something']],
