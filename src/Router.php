@@ -105,7 +105,7 @@ class Router
         $urlToMatch = '/' . trim($urlToMatch, '/');
 
         return $this->matchDirect($httpMethod, $urlToMatch)
-            ?? $this->matchParametered($httpMethod, $urlToMatch);
+            ?? $this->matchParameteredOrCatchAll($httpMethod, $urlToMatch);
     }
 
     protected function matchDirect(string $httpMethod, string $urlToMatch): ?Route
@@ -119,44 +119,42 @@ class Router
         return $route;
     }
 
-    protected function matchParametered(string $httpMethod, string $urlToMatch): ?Route
+    protected function matchParameteredOrCatchAll(string $httpMethod, string $urlToMatch): ?Route
     {
         if (!array_key_exists($httpMethod, $this->routes)) {
             return null;
         }
 
         foreach ($this->routes[$httpMethod] as $routeUrl => $route) {
-            if (!str_contains($routeUrl, '{') || !$route->supportsHttpMethod($httpMethod)) {
-                continue;
-            }
-
             $explodedUrlToMatch = explode('/', trim($urlToMatch, '/'));
             $explodedRouteUrl = explode('/', trim($routeUrl, '/'));
 
-            if (count($explodedUrlToMatch) !== count($explodedRouteUrl)) {
-                continue;
-            }
-
-            $providedValues = array_diff($explodedUrlToMatch, $explodedRouteUrl);
-
             $valuesWithParameterAsKey = [];
+            $catchAllValues = [];
+            $catchAllParameterIndex = 0;
+            foreach ($explodedUrlToMatch as $key => $value) {
+                $parameter = $explodedRouteUrl[$key] ?? null;
 
-            foreach ($providedValues as $key => $value) {
-                $parameter = $explodedRouteUrl[$key];
-
-                if (!str_contains($parameter, '{')) {
+                if ($parameter === null && !$route->hasCatchAll()) {
                     continue;
                 }
 
-                $valuesWithParameterAsKey[trim($parameter, '{}')] = $value;
-
-                $explodedUrlToMatch[$key] = $parameter;
+                if (!$parameter || $parameter === '*') {
+                    $catchAllValues[$catchAllParameterIndex++] = $value;
+                }
+                elseif (str_contains($parameter, '{')) {
+                    $valuesWithParameterAsKey[trim($parameter, '{}')] = $value;
+                }
+                else {
+                    if ($value != $parameter) {
+                        continue 2;
+                    }
+                }
             }
+            $route->setParameterValues(new ParameterValues($valuesWithParameterAsKey));
+            $route->setCatchAllValues($catchAllValues);
 
-            if ($explodedUrlToMatch === $explodedRouteUrl) {
-                $route->setParameterValues(new ParameterValues($valuesWithParameterAsKey));
-                return $route;
-            }
+            return $route;
         }
 
         return null;

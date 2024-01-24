@@ -20,6 +20,7 @@ class Route
     protected ?string $action = null;
     protected Metadata $metadata;
     protected ParameterValues $parameterValues;
+    protected array $catchAllValues;
 
     /**
      * @param string[] $httpMethods
@@ -36,6 +37,10 @@ class Route
         $this->url = '/' . trim($url, '/');
         $this->metadata = new Metadata($metadata);
 
+        if (str_contains($this->url, '*') && !str_ends_with($this->url, '*')) {
+            throw new RoutingException('Catch-all parameter (*) can only be at the end of the route URL.');
+        }
+
         if (is_array($callable) && count($callable) === 2) {
             [$this->controller, $this->action] = $callable;
         } elseif (is_callable($callable)) {
@@ -43,6 +48,7 @@ class Route
         }
 
         $this->parameterValues = new ParameterValues();
+        $this->catchAllValues = [];
     }
 
     /**
@@ -98,6 +104,16 @@ class Route
         $this->parameterValues = $values;
     }
 
+    public function addCatchAllValue(string $value): void
+    {
+        $this->catchAllValues[] = $value;
+    }
+
+    public function setCatchAllValues(array $values): void
+    {
+        $this->catchAllValues = $values;
+    }
+
     public function getParameterValue(string $name): mixed
     {
         return $this->parameterValues->get($name);
@@ -108,9 +124,24 @@ class Route
         return $this->parameterValues;
     }
 
+    public function getCatchAllValue(int $index): ?string
+    {
+        return $this->catchAllValues[$index] ?? null;
+    }
+
+    public function getCatchAllValues(): array
+    {
+        return $this->catchAllValues;
+    }
+
     public function hasParameterValues(): bool
     {
         return count($this->parameterValues->getAll()) > 0;
+    }
+
+    public function hasCatchAllValues(): bool
+    {
+        return count($this->catchAllValues) > 0;
     }
 
     public function getParameters(): array
@@ -136,6 +167,11 @@ class Route
     public function hasParameters(): bool
     {
         return str_contains($this->url, '{');
+    }
+
+    public function hasCatchAll(): bool
+    {
+        return str_ends_with($this->url, '*');
     }
 
     public function getMetadata(): Metadata

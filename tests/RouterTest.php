@@ -27,23 +27,41 @@ class RouterTest extends TestCase
                 ['GET'],
                 'simple',
                 '/simple',
-                [Controller::class, 'simple']
+                [Controller::class, 'simple'],
             ),
             new Route(
                 ['GET', 'POST'],
                 'complex',
                 '/complex/{id}/{name}',
-                [Controller::class, 'complex']
+                [Controller::class, 'complex'],
             ),
             new Route(
                 ['GET'],
                 'callable',
                 '/callable/{parameter}',
-                fn($parameter) => 'callable received: ' . $parameter
-            )
+                fn($parameter) => 'callable received: ' . $parameter,
+            ),
+            new Route(
+                ['GET'],
+                'catchall',
+                '/catchall/*',
+                [Controller::class, 'catchAll'],
+            ),
+            new Route(
+                ['GET'],
+                'catchall2',
+                '/catch/all/*',
+                [Controller::class, 'catchAll'],
+            ),
+            new Route(
+                ['GET'],
+                'catchall3',
+                '/catch/{param}/*',
+                [Controller::class, 'catchAll'],
+            ),
         );
 
-        self::assertCount(3, $this->router->getRoutes('GET'));
+        self::assertCount(6, $this->router->getRoutes('GET'));
         self::assertCount(1, $this->router->getRoutes('POST'));
     }
 
@@ -291,7 +309,7 @@ class RouterTest extends TestCase
     {
         $this->setUpDefaultRoutesAndAssert();
 
-        self::assertCount(3, $this->router->getRoutes('GET'));
+        self::assertCount(4, $this->router->getRoutes('GET'));
         self::assertCount(1, $this->router->getRoutes('POST'));
     }
 
@@ -379,10 +397,12 @@ class RouterTest extends TestCase
 
         $matched = $this->router->match('GET', 'route1/test');
 
+        self::assertNotNull($matched);
         self::assertSame('route1', $matched->getName());
 
         $matched = $this->router->match('GET', 'route2/test');
 
+        self::assertNotNull($matched);
         self::assertSame('route2', $matched->getName());
     }
 
@@ -407,5 +427,69 @@ class RouterTest extends TestCase
 
         self::assertTrue($route->hasParameterValues());
         self::assertEquals($values, $route->getParameterValues());
+    }
+
+    /**
+     * @dataProvider provideCorrectCatchAllUrls
+     */
+    public function testFailCorrectCatchAllUrl(string $url): void
+    {
+        $this->router->addRoute(new Route(['GET'], 'catchAll', $url, [Controller::class, 'catchAll']));
+        self::assertCount(1, $this->router->getRoutes('GET'));
+    }
+    private function provideCorrectCatchAllUrls(): array
+    {
+        return [
+            ['/catchall/*'],
+            ['/catchall/*/'],
+            ['/catchall/{some}/*'],
+            ['/catchall/{some}/*/'],
+            ['/catchall/{some}/{param}/*'],
+            ['/catchall/{some}/{param}/*/'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideIncorrectCatchAllUrls
+     */
+    public function testFailIncorrectCatchAllUrl(string $url): void
+    {
+        $this->expectException(RoutingException::class);
+        $this->router->addRoute(new Route(['GET'], 'catchAll', $url, [Controller::class, 'catchAll']));
+    }
+    private function provideIncorrectCatchAllUrls(): array
+    {
+        return [
+            ['/catchall/*/something'],
+            ['/catchall/*/{param}'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideCatchAllUrls
+     */
+    public function testCatchAllUrl(string $url, array $expectedParams, array $expectedCatchAllValues): void
+    {
+        $this->setUpDefaultRoutesAndAssert();
+
+        $route = $this->router->match('GET', $url);
+
+        self::assertNotNull($route);
+        self::assertEquals(count($expectedParams), count($route->getParameters()));
+        self::assertEquals($expectedParams, array_values($route->getParameterValues()->getAll()));
+        self::assertEquals(count($expectedCatchAllValues), count($route->getCatchAllValues()));
+        self::assertEquals($expectedCatchAllValues, $route->getCatchAllValues());
+    }
+
+    private function provideCatchAllUrls(): array
+    {
+        return [
+            ['/catchall/something', [], ['something']],
+            ['/catchall/something/else', [], ['something', 'else']],
+            ['/catch/all/something', [], ['something']],
+            ['/catch/all/something/else', [], ['something', 'else']],
+            ['/catch/more/something', ['more'], ['something']],
+            ['/catch/more/something/else', ['more'], ['something', 'else']],
+        ];
     }
 }
