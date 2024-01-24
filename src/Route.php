@@ -37,8 +37,13 @@ class Route
         $this->url = '/' . trim($url, '/');
         $this->metadata = new Metadata($metadata);
 
-        if (str_contains($this->url, '*') && !str_ends_with($this->url, '*')) {
-            throw new RoutingException('Catch-all parameter (*) can only be at the end of the route URL.');
+        if (str_contains($this->url, '*')) {
+            if (!str_ends_with($this->url, '*')) {
+                throw new RoutingException('Catch-all parameter * can only be at the end of the route URL.');
+            }
+            if ($this->url !== '*' && !str_ends_with($this->url, '/*')) {
+                throw new RoutingException('Catch-all parameter has to be a single asterisk.');
+            }
         }
 
         if (is_array($callable) && count($callable) === 2) {

@@ -440,6 +440,7 @@ class RouterTest extends TestCase
     private function provideCorrectCatchAllUrls(): array
     {
         return [
+            ['*'],
             ['/catchall/*'],
             ['/catchall/*/'],
             ['/catchall/{some}/*'],
@@ -462,6 +463,9 @@ class RouterTest extends TestCase
         return [
             ['/catchall/*/something'],
             ['/catchall/*/{param}'],
+            ['/catchall/**'],
+            ['/catchall/blah*'],
+            ['/catchall/*blah'],
         ];
     }
 
@@ -471,6 +475,7 @@ class RouterTest extends TestCase
     public function testCatchAllUrl(string $url, array $expectedParams, array $expectedCatchAllValues): void
     {
         $this->setUpDefaultRoutesAndAssert();
+        $this->router->addRoute(new Route(['GET'], 'catchEverything', '*', fn() => null));
 
         $route = $this->router->match('GET', $url);
 
@@ -490,6 +495,9 @@ class RouterTest extends TestCase
             ['/catch/all/something/else', [], ['something', 'else']],
             ['/catch/more/something', ['more'], ['something']],
             ['/catch/more/something/else', ['more'], ['something', 'else']],
+            ['/everything', [], ['everything']],
+            ['/catching/everything', [], ['catching', 'everything']],
+            ['/and/catching/everything', [], ['and', 'catching','everything']],
         ];
     }
 }
